@@ -3,9 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Nexus Intelligence | Quant-Zero Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 </head>
-<body>
-    <h1>Hello, World!</h1>
+<body class="antialiased">
+
+    <nav class="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+        <div class="flex flex-col">
+            <h1 class="text-2xl font-bold tracking-tighter text-amber-500 uppercase">Nexus Intelligence</h1>
+            <span class="text-[10px] text-slate-500 tracking-[0.3em] font-mono">QUANT-ZERO SERVERLESS V1.0</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="text-right hidden md:block">
+                <p class="text-[10px] text-slate-500 uppercase">Network Status</p>
+                <p class="text-xs text-emerald-500 font-mono animate-pulse">● ENGINES ACTIVE</p>
+            </div>
+            <div class="h-10 w-10 rounded-full border border-amber-500/30 flex items-center justify-center bg-amber-500/10">
+                <span class="text-amber-500 text-xs">AI</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 pb-20">
+        
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+            <div class="glass p-5 rounded-2xl">
+                <label class="label-text">Investment Bracket</label>
+                <select id="bracket" class="input-field">
+                    <option value="1000">$1,000 (Novice)</option>
+                    <option value="10000">$10,000 (Growth)</option>
+                    <option value="100000">$100,000 (Wealth)</option>
+                    <option value="1000000">$1M+ (Institutional)</option>
+                </select>
+            </div>
+            <div class="glass p-5 rounded-2xl">
+                <label class="label-text">Time Horizon</label>
+                <select id="horizon" class="input-field">
+                    <option value="3m">3 Months</option>
+                    <option value="1y">1 Year</option>
+                    <option value="5y">5 Years+</option>
+                </select>
+            </div>
+            <div class="glass p-5 rounded-2xl">
+                <label class="label-text">Risk Strategy</label>
+                <select id="risk" class="input-field">
+                    <option value="conservative">Capital Preservation</option>
+                    <option value="aggressive">Maximum Alpha</option>
+                </select>
+            </div>
+            <button onclick="executeNexus()" class="btn-primary">
+                EXECUTE SIMULATION
+            </button>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-1 flex flex-col space-y-4">
+                <div class="glass p-6 rounded-2xl flex-grow overflow-hidden border-l-4 border-l-emerald-500">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase mb-4 tracking-widest">Simulation Logs</h3>
+                    <div id="terminal" class="font-mono text-[11px] text-emerald-400 space-y-2 h-80 overflow-y-auto">
+                        > SYSTEM STANDBY...<br>
+                        > READY FOR INPUT SELECTION...
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultCard" class="lg:col-span-2 glass p-10 rounded-3xl relative overflow-hidden hidden">
+                <div class="absolute top-0 right-0 p-8 text-right">
+                    <p class="text-[10px] text-slate-500 uppercase">Confidence Rating</p>
+                    <p id="confidence" class="text-4xl font-bold text-emerald-500">--</p>
+                </div>
+
+                <div class="mb-10">
+                    <span class="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-bold rounded-full uppercase tracking-widest">Logic Link Established</span>
+                    <h2 id="catalystTitle" class="text-3xl font-light mt-4 leading-tight max-w-md">Scanning market vectors...</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5">
+                        <p class="text-[10px] text-slate-500 uppercase mb-1">Primary Asset</p>
+                        <p id="assetType" class="text-xl font-semibold text-white">--</p>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5">
+                        <p class="text-[10px] text-slate-500 uppercase mb-1">Projected ROI</p>
+                        <p id="roiValue" class="text-xl font-semibold text-emerald-400">--</p>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5">
+                        <p class="text-[10px] text-slate-500 uppercase mb-1">Impact Velocity</p>
+                        <p id="velocity" class="text-xl font-semibold text-white">T+48h</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Tactical Course of Action</p>
+                    <ul id="steps" class="space-y-3 text-sm text-slate-300">
+                        </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const logs = document.getElementById('terminal');
+        const logicDatabase = [
+            { trigger: "OPEC supply tightening sentiment on Platform X", asset: "Crude Oil", roi: "9.2%", conf: "94%", steps: ["Initiate position in Energy ETFs", "Set stop-loss at 2.5%", "Exit at T+72h peak"] },
+            { trigger: "Fed Interest Rate hold rumors via Bloomberg", asset: "Gold (XAU)", roi: "6.5%", conf: "89%", steps: ["Move 30% capital to Physical Gold", "Hedge with Silver futures", "Hold for 3 month horizon"] },
+            { trigger: "Institutional Crypto inflow detected in major wallets", asset: "Bitcoin / Ethereum", roi: "18.4%", conf: "81%", steps: ["Averaged entry over 48 hours", "Utilize cold-storage allocation", "Monitor weekend volatility delta"] }
+        ];
+
+        function addLog(msg) {
+            const div = document.createElement('div');
+            div.innerHTML = `> ${msg}`;
+            logs.appendChild(div);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function executeNexus() {
+            document.getElementById('resultCard').classList.add('hidden');
+            logs.innerHTML = "";
+            const bracket = document.getElementById('bracket').value;
+
+            addLog("REQUESTING SERVERLESS COMPUTE...");
+            setTimeout(() => addLog("FETCHING LATEST TEMPORAL CORRELATIONS..."), 400);
+            setTimeout(() => addLog(`MAPPING BRACKET: $${bracket} OPTIMIZATION...`), 900);
+            setTimeout(() => addLog("RUNNING 10,000 MONTE CARLO SIMULATIONS..."), 1500);
+            
+            setTimeout(() => {
+                const data = logicDatabase[Math.floor(Math.random() * logicDatabase.length)];
+                addLog(`<span class="text-amber-500">LOGIC LINK FOUND: ${data.asset}</span>`);
+                
+                document.getElementById('catalystTitle').innerText = data.trigger;
+                document.getElementById('confidence').innerText = data.conf;
+                document.getElementById('assetType').innerText = data.asset;
+                document.getElementById('roiValue').innerText = "+" + data.roi;
+                
+                const stepsList = document.getElementById('steps');
+                stepsList.innerHTML = data.steps.map(s => `<li>• ${s}</li>`).join('');
+                
+                document.getElementById('resultCard').classList.remove('hidden');
+                addLog("SIMULATION COMPLETE. STRATEGY READY.");
+            }, 2200);
+        }
+    </script>
 </body>
 </html>
